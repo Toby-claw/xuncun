@@ -3,138 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>三八妇女节活动海报 - 广西广电科技</title>
+    <title>三八妇女节海报 - 广西广电科技</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap');
+        
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            background: #f5f5f5;
+            font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            background: #f0f0f0;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
             gap: 30px;
         }
         
-        .header {
-            text-align: center;
-            margin-bottom: 10px;
-        }
-        .header h1 {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 8px;
-        }
-        .header p {
-            font-size: 14px;
+        .section-title {
+            font-size: 16px;
             color: #666;
+            font-weight: 500;
+            margin-bottom: -20px;
         }
         
         /* 启动页 1125×2180 */
-        .poster-launch {
+        .poster-1 {
             width: 375px;
             height: 727px;
-            background: linear-gradient(180deg, #ffe4e1 0%, #ffb6c1 30%, #ff69b4 70%, #d63384 100%);
+            background: linear-gradient(180deg, #fff5f5 0%, #ffe0e0 30%, #ffb6c1 70%, #ff69b4 100%);
             position: relative;
             overflow: hidden;
-            border-radius: 20px;
-            box-shadow: 0 15px 50px rgba(214,51,132,0.3);
+            border-radius: 0;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
         }
         
-        /* 花海背景装饰 */
-        .bg-decor {
+        /* 花海装饰 */
+        .flower-bg {
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background: 
-                radial-gradient(circle at 10% 90%, rgba(255,182,193,0.8) 0%, transparent 40%),
-                radial-gradient(circle at 90% 10%, rgba(255,218,185,0.6) 0%, transparent 35%),
-                radial-gradient(circle at 50% 50%, rgba(255,240,245,0.4) 0%, transparent 50%);
+                radial-gradient(circle at 15% 85%, rgba(255,182,193,0.6) 0%, transparent 35%),
+                radial-gradient(circle at 85% 15%, rgba(255,218,185,0.5) 0%, transparent 30%),
+                radial-gradient(circle at 50% 50%, rgba(255,240,245,0.4) 0%, transparent 40%);
         }
         
-        .flower-decor {
+        .flower-icon {
             position: absolute;
-            font-size: 40px;
-            opacity: 0.4;
+            font-size: 48px;
+            opacity: 0.3;
         }
-        .f1 { top: 5%; left: 5%; }
-        .f2 { top: 15%; right: 8%; }
-        .f3 { bottom: 30%; left: 3%; }
-        .f4 { bottom: 20%; right: 5%; }
-        .f5 { top: 40%; right: 3%; }
+        .f1 { top: 8%; left: 8%; }
+        .f2 { top: 12%; right: 10%; }
+        .f3 { bottom: 35%; left: 5%; }
+        .f4 { bottom: 25%; right: 8%; }
+        .f5 { top: 45%; right: 5%; }
         
         /* LOGO区域 */
-        .logo-wrap {
+        .logo-box {
             position: absolute;
-            top: 50px;
-            left: 20px;
+            top: 40px;
+            left: 25px;
             z-index: 10;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
+        
         .logo-img {
-            width: 50px;
-            height: 50px;
+            width: 55px;
+            height: 55px;
             object-fit: contain;
             background: white;
-            border-radius: 10px;
-            padding: 5px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            padding: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
+        
         .logo-text {
-            font-size: 13px;
-            color: #fff;
+            font-size: 14px;
             font-weight: 600;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            color: #c41e3a;
             line-height: 1.3;
         }
         
-        /* 主内容区 */
-        .main-content {
+        /* 主内容 */
+        .main-box {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
-            width: 85%;
+            width: 90%;
             z-index: 10;
         }
         
         .company-name {
-            font-size: 18px;
-            color: #fff;
-            margin-bottom: 25px;
-            font-weight: 600;
-            letter-spacing: 3px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            font-size: 20px;
+            font-weight: 500;
+            color: #c41e3a;
+            margin-bottom: 30px;
+            letter-spacing: 4px;
         }
         
-        .theme-main {
-            font-size: 32px;
-            font-weight: 800;
-            color: #fff;
-            line-height: 1.5;
-            text-shadow: 0 3px 6px rgba(0,0,0,0.3);
-            margin-bottom: 10px;
+        .title-line {
+            font-size: 38px;
+            font-weight: 900;
+            color: #c41e3a;
+            line-height: 1.4;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
         }
         
         .divider {
-            width: 80px;
+            width: 100px;
             height: 3px;
-            background: linear-gradient(90deg, transparent, #fff, transparent);
+            background: linear-gradient(90deg, transparent, #c41e3a, transparent);
             margin: 25px auto;
         }
         
-        .theme-sub {
-            font-size: 20px;
-            color: #fff;
-            font-weight: 500;
-            letter-spacing: 2px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        .sub-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #c41e3a;
+            letter-spacing: 6px;
         }
         
-        /* 底部信息 */
-        .footer-info {
+        /* 底部 */
+        .footer-box {
             position: absolute;
             bottom: 50px;
             left: 0;
@@ -142,37 +140,41 @@
             text-align: center;
             z-index: 10;
         }
-        .date-info {
-            font-size: 16px;
-            color: rgba(255,255,255,0.9);
+        
+        .date-text {
+            font-size: 18px;
+            color: #c41e3a;
             margin-bottom: 8px;
-        }
-        .org-info {
-            font-size: 14px;
-            color: rgba(255,255,255,0.8);
+            font-weight: 500;
         }
         
-        /* 横幅版 1125×580 */
-        .poster-banner {
+        .org-text {
+            font-size: 16px;
+            color: #c41e3a;
+            opacity: 0.9;
+        }
+        
+        /* 横幅 1125×580 */
+        .poster-2 {
             width: 375px;
             height: 193px;
-            background: linear-gradient(135deg, #d63384 0%, #ff69b4 50%, #ffb6c1 100%);
+            background: linear-gradient(135deg, #c41e3a 0%, #e75480 50%, #ffb6c1 100%);
             position: relative;
             overflow: hidden;
-            border-radius: 12px;
-            box-shadow: 0 8px 30px rgba(214,51,132,0.25);
+            border-radius: 0;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
         }
         
         .banner-logo {
             position: absolute;
             top: 15px;
             left: 15px;
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             object-fit: contain;
             background: white;
-            border-radius: 8px;
-            padding: 4px;
+            border-radius: 6px;
+            padding: 3px;
         }
         
         .banner-content {
@@ -181,149 +183,121 @@
             left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
-            width: 90%;
+            width: 92%;
         }
         
         .banner-company {
-            font-size: 14px;
+            font-size: 15px;
             color: rgba(255,255,255,0.95);
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+            font-weight: 500;
+        }
+        
+        .banner-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: white;
+            line-height: 1.3;
             letter-spacing: 2px;
         }
         
-        .banner-theme {
-            font-size: 22px;
-            font-weight: 700;
-            color: #fff;
-            line-height: 1.4;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        
-        /* 分享图 300×300 */
-        .poster-share {
+        /* 方形 300×300 */
+        .poster-3 {
             width: 300px;
             height: 300px;
-            background: linear-gradient(135deg, #d63384 0%, #ff69b4 100%);
+            background: linear-gradient(135deg, #c41e3a 0%, #e75480 100%);
             position: relative;
             overflow: hidden;
-            border-radius: 16px;
-            box-shadow: 0 8px 25px rgba(214,51,132,0.3);
+            border-radius: 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
         }
         
-        .share-logo {
+        .square-logo {
             position: absolute;
             top: 20px;
             left: 20px;
-            width: 45px;
-            height: 45px;
+            width: 50px;
+            height: 50px;
             object-fit: contain;
             background: white;
-            border-radius: 10px;
-            padding: 5px;
+            border-radius: 8px;
+            padding: 4px;
         }
         
-        .share-content {
+        .square-content {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
-            width: 85%;
+            width: 88%;
         }
         
-        .share-theme {
-            font-size: 26px;
-            font-weight: 700;
-            color: #fff;
-            line-height: 1.4;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        .square-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: white;
+            line-height: 1.3;
+            letter-spacing: 2px;
             margin-bottom: 15px;
         }
         
-        .share-company {
-            font-size: 13px;
-            color: rgba(255,255,255,0.9);
-            letter-spacing: 1px;
-        }
-        
-        /* 提示 */
-        .tip {
-            font-size: 13px;
-            color: #666;
-            text-align: center;
-            padding: 15px;
-            background: #f0f0f0;
-            border-radius: 10px;
-            max-width: 375px;
-            line-height: 1.6;
-        }
-        
-        @media print {
-            body { padding: 0; background: white; }
-            .header, .tip { display: none; }
-            .poster-launch, .poster-banner, .poster-share {
-                box-shadow: none;
-                margin-bottom: 20px;
-            }
+        .square-sub {
+            font-size: 16px;
+            color: rgba(255,255,255,0.95);
+            font-weight: 500;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>🌸 三八妇女节活动海报</h1>
-        <p>广西广电科技公司 · 凝心聚力绽芳华 · 巾帼奋进新征程</p>
-    </div>
+    <div class="section-title">📱 启动页 (1125×2180) - 长按保存图片</div>
     
-    <!-- 启动页 -->
-    <div class="poster-launch">
-        <div class="bg-decor"></div>
-        <div class="flower-decor f1">🌸</div>
-        <div class="flower-decor f2">🌺</div>
-        <div class="flower-decor f3">🌼</div>
-        <div class="flower-decor f4">🌷</div>
-        <div class="flower-decor f5">💐</div>
+    <div class="poster-1">
+        <div class="flower-bg"></div>
+        <div class="flower-icon f1">🌸</div>
+        <div class="flower-icon f2">🌺</div>
+        <div class="flower-icon f3">🌼</div>
+        <div class="flower-icon f4">🌷</div>
+        <div class="flower-icon f5">💐</div>
         
-        <div class="logo-wrap">
+        <div class="logo-box">
             <img src="https://toby-claw.github.io/xuncun/38-poster/logo1.png" class="logo-img" alt="广西广电网络">
             <div class="logo-text">广西广电网络</div>
         </div>
         
-        <div class="main-content">
+        <div class="main-box">
             <div class="company-name">广西广电科技公司</div>
-            <div class="theme-main">凝心聚力绽芳华</div>
-            <div class="theme-main">巾帼奋进新征程</div>
+            <div class="title-line">凝心聚力绽芳华</div>
+            <div class="title-line">巾帼奋进新征程</div>
             <div class="divider"></div>
-            <div class="theme-sub">女职工主题活动</div>
+            <div class="sub-title">女职工主题活动</div>
         </div>
         
-        <div class="footer-info">
-            <div class="date-info">2025年3月8日</div>
-            <div class="org-info">工会委员会 · 主办</div>
+        <div class="footer-box">
+            <div class="date-text">2025年3月8日</div>
+            <div class="org-text">工会委员会 · 主办</div>
         </div>
     </div>
     
-    <!-- 横幅 -->
-    <div class="poster-banner">
+    <div class="section-title">🖼️ 横幅 (1125×580)</div>
+    
+    <div class="poster-2">
         <img src="https://toby-claw.github.io/xuncun/38-poster/logo1.png" class="banner-logo" alt="LOGO">
         <div class="banner-content">
             <div class="banner-company">广西广电科技公司</div>
-            <div class="banner-theme">凝心聚力绽芳华 · 巾帼奋进新征程</div>
+            <div class="banner-title">凝心聚力绽芳华 · 巾帼奋进新征程</div>
         </div>
     </div>
     
-    <!-- 分享图 -->
-    <div class="poster-share">
-        <img src="https://toby-claw.github.io/xuncun/38-poster/logo1.png" class="share-logo" alt="LOGO">
-        <div class="share-content">
-            <div class="share-theme">凝心聚力<br>绽芳华</div>
-            <div class="share-company">广西广电科技</div>
-        </div>
-    </div>
+    <div class="section-title">📤 分享图 (300×300)</div>
     
-    <div class="tip">
-        💡 <b>使用方法：</b><br>
-        电脑：右键「打印」→「另存为PDF」或按F11全屏后截图<br>
-        手机：双指放大海报后截图保存
+    <div class="poster-3">
+        <img src="https://toby-claw.github.io/xuncun/38-poster/logo1.png" class="square-logo" alt="LOGO">
+        <div class="square-content">
+            <div class="square-title">凝心聚力<br>绽芳华</div>
+            <div class="square-sub">广西广电科技</div>
+        </div>
     </div>
 </body>
 </html>
