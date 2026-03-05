@@ -49,15 +49,18 @@
             </div>
         </div>
 
+        <!-- 时段标识 -->
+        <div class="period-badge" id="periodBadge">☀️ 白天</div>
+
         <!-- 头部大图 -->
-        <div class="hero">
-            <div class="hero-bg"></div>
+        <div class="hero" id="heroSection">
+            <div class="hero-bg" id="heroBg"></div>
             <div class="hero-content">
                 <h1>牛路村 <span onclick="switchVillage()">⇄</span></h1>
                 <p>广西防城港市 · 距南宁约2小时车程</p>
                 <div class="hero-tags">
-                    <span class="tag-orange">周末好去处</span>
-                    <span class="tag-white">24°C 晴</span>
+                    <span class="tag-orange" id="timeTag">周末好去处</span>
+                    <span class="tag-white" id="weatherTag">24°C 晴</span>
                 </div>
                 <div class="hero-actions">
                     <button onclick="playAudio()">
@@ -311,6 +314,61 @@
     <div id="toast"></div>
 
     <script>
+        // 时段背景配置
+        const timeConfig = {
+            dawn: {    // 清晨 5-8点
+                class: 'period-dawn',
+                badge: '🌅 清晨',
+                tag: '日出好时光'
+            },
+            day: {     // 白天 8-17点
+                class: 'period-day',
+                badge: '☀️ 白天',
+                tag: '周末好去处'
+            },
+            dusk: {    // 黄昏 17-20点
+                class: 'period-dusk',
+                badge: '🌆 黄昏',
+                tag: '日落时分'
+            },
+            night: {   // 夜晚 20-5点
+                class: 'period-night',
+                badge: '🌙 夜晚',
+                tag: '星空下'
+            }
+        };
+
+        // 根据时间获取时段
+        function getPeriod(hour) {
+            if (hour >= 5 && hour < 8) return 'dawn';
+            if (hour >= 8 && hour < 17) return 'day';
+            if (hour >= 17 && hour < 20) return 'dusk';
+            return 'night';
+        }
+
+        // 更新时段背景
+        function updateTimeBackground() {
+            const hour = new Date().getHours();
+            const period = getPeriod(hour);
+            const config = timeConfig[period];
+
+            // 更新背景
+            const heroBg = document.getElementById('heroBg');
+            heroBg.className = 'hero-bg ' + config.class;
+
+            // 更新时段标识
+            document.getElementById('periodBadge').textContent = config.badge;
+
+            // 更新标签
+            document.getElementById('timeTag').textContent = config.tag;
+        }
+
+        // 初始化时更新
+        updateTimeBackground();
+
+        // 每分钟检查一次
+        setInterval(updateTimeBackground, 60000);
+
         // 更新时间
         function updateTime() {
             const now = new Date();

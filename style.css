@@ -106,6 +106,23 @@ body {
     color: #666;
 }
 
+/* 时段标识 */
+.period-badge {
+    position: absolute;
+    top: 80px;
+    right: 16px;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    color: #fff;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
 /* 头部大图 */
 .hero {
     position: relative;
@@ -116,10 +133,33 @@ body {
 .hero-bg {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.4)),
-                url('https://toby-claw.github.io/xuncun/hero_bg.png');
     background-size: cover;
     background-position: center;
+    transition: background-image 0.5s ease;
+}
+
+/* 时段背景 - 清晨 */
+.hero-bg.period-dawn {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.5)),
+                url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800');
+}
+
+/* 时段背景 - 白天 */
+.hero-bg.period-day {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.3)),
+                url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800');
+}
+
+/* 时段背景 - 黄昏 */
+.hero-bg.period-dusk {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.5)),
+                url('https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=800');
+}
+
+/* 时段背景 - 夜晚 */
+.hero-bg.period-night {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.7)),
+                url('https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800');
 }
 .hero-content {
     position: absolute;
