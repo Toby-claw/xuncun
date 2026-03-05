@@ -7,10 +7,11 @@
   ███████║╚██████╔╝██║ ╚████║╚██████╗╚██████╔╝██║ ╚████║
   ╚══════╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝
   
-  当前版本：v2.1.0 (20260306)
-  更新内容：增加牛路村数字门户，优化游客指南模块
+  当前版本：v2.2.0 (20260306)
+  更新内容：绩效目标申报表完成，版本追踪系统上线
   
   版本历史：
+  v2.2.0 (20260306) - 绩效目标申报表完成，版本追踪系统上线
   v2.1.0 (20260306) - 牛路村试点上线，新增游客指南、当季好物
   v2.0.0 (20260215) - 大改版：全新UI设计，增加赶集功能
   v1.5.2 (20260120) - 修复村民办事流程bug
@@ -23,7 +24,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="xuncun-version" content="v2.1.0">
+    <meta name="xuncun-version" content="v2.2.0">
     <meta name="xuncun-build" content="20260306">
     <title>寻村</title>
     <link rel="stylesheet" href="style.css">
@@ -493,14 +494,14 @@
         // 寻村版本信息（控制台输入 xuncun.version 查看）
         // ═══════════════════════════════════════════
         const xuncun = {
-            version: 'v2.1.0',
+            version: 'v2.2.0',
             build: '20260306',
             env: 'production',
             village: '牛路村',
             releaseNotes: [
-                '✦ 牛路村数字门户上线',
-                '✦ 新增游客指南模块',
-                '✦ 优化当季好物展示'
+                '✦ 绩效目标申报表完成',
+                '✦ 版本追踪系统上线',
+                '✦ 牛路村数字门户优化'
             ],
             log: function() {
                 console.log('%c 寻村 XUNCUN ', 'background:#10b981;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;');
@@ -520,7 +521,7 @@
     
     <!-- 隐秘版本号（几乎看不见）-->
     <div style="position:fixed;bottom:2px;right:5px;font-size:8px;color:rgba(0,0,0,0.08);pointer-events:none;z-index:9999;">
-        v2.1.0
+        v2.2.0
     </div>
 </body>
 </html>
