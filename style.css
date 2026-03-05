@@ -123,6 +123,20 @@ body {
     gap: 6px;
 }
 
+/* 版本号 */
+.version-badge {
+    position: absolute;
+    top: 80px;
+    left: 16px;
+    background: rgba(76,175,80,0.9);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    color: #fff;
+    z-index: 50;
+    font-weight: 500;
+}
+
 /* 头部大图 */
 .hero {
     position: relative;
