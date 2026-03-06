@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>发布 - 寻村</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 430px;
+            margin: 0 auto;
+            background: #fff;
+            min-height: 100vh;
+            position: relative;
+        }
+        /* 顶部导航 */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            background: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-left {
+            color: #999;
+            font-size: 15px;
+        }
+        .header-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #333;
+        }
+        .header-right {
+            background: #07c160;
+            color: #fff;
+            padding: 6px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            border: none;
+            opacity: 0.6;
+        }
+        .header-right.active {
+            opacity: 1;
+        }
+        /* 发布类型选择 */
+        .type-selector {
+            display: flex;
+            padding: 16px;
+            gap: 12px;
+            overflow-x: auto;
+            background: #fff;
+        }
+        .type-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 20px;
+            border-radius: 12px;
+            background: #f7f7f7;
+            min-width: 72px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .type-item.active {
+            background: #e6f7ed;
+            color: #07c160;
+        }
+        .type-icon {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        .type-name {
+            font-size: 12px;
+            color: #666;
+        }
+        .type-item.active .type-name {
+            color: #07c160;
+        }
+        /* 内容输入区 */
+        .content-area {
+            padding: 16px;
+            background: #fff;
+        }
+        .content-input {
+            width: 100%;
+            min-height: 120px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            line-height: 1.6;
+            resize: none;
+            color: #333;
+        }
+        .content-input::placeholder {
+            color: #ccc;
+        }
+        /* 图片上传 */
+        .image-upload {
+            padding: 0 16px 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .upload-btn {
+            width: 80px;
+            height: 80px;
+            border: 1px dashed #ddd;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .upload-btn .icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+        .image-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .image-preview .remove {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 18px;
+            height: 18px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        /* 位置信息 */
+        .location-bar {
+            margin: 0 16px 16px;
+            padding: 12px 16px;
+            background: #f7f7f7;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #666;
+        }
+        .location-bar .icon {
+            color: #07c160;
+        }
+        /* 高级选项 */
+        .options-section {
+            padding: 0 16px;
+        }
+        .option-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .option-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+            color: #333;
+        }
+        .option-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        .option-right {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #999;
+            font-size: 14px;
+        }
+        .option-right .arrow {
+            font-size: 12px;
+        }
+        /* 话题标签 */
+        .topic-section {
+            padding: 16px;
+        }
+        .topic-title {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 12px;
+        }
+        .topic-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .topic-tag {
+            padding: 6px 14px;
+            background: #f0f0f0;
+            border-radius: 16px;
+            font-size: 13px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .topic-tag:hover {
+            background: #e6f7ed;
+            color: #07c160;
+        }
+        .topic-tag.active {
+            background: #07c160;
+            color: #fff;
+        }
+        /* 底部提示 */
+        .footer-tips {
+            padding: 20px 16px;
+            text-align: center;
+            font-size: 12px;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部导航 -->
+        <div class="header">
+            <div class="header-left" onclick="goBack()">取消</div>
+            <div class="header-title">发布动态</div>
+            <button class="header-right" id="publishBtn">发布</button>
+        </div>
+
+        <!-- 发布类型选择 -->
+        <div class="type-selector">
+            <div class="type-item active" data-type="moment">
+                <div class="type-icon">📸</div>
+                <div class="type-name">随手拍</div>
+            </div>
+            <div class="type-item" data-type="food">
+                <div class="type-icon">🍜</div>
+                <div class="type-name">美食</div>
+            </div>
+            <div class="type-item" data-type="spot">
+                <div class="type-icon">📍</div>
+                <div class="type-name">打卡</div>
+            </div>
+            <div class="type-item" data-type="homestay">
+                <div class="type-icon">🏠</div>
+                <div class="type-name">民宿</div>
+            </div>
+            <div class="type-item" data-type="activity">
+                <div class="type-icon">🎉</div>
+                <div class="type-name">活动</div>
+            </div>
+        </div>
+
+        <!-- 内容输入 -->
+        <div class="content-area">
+            <textarea class="content-input" placeholder="分享村里的新鲜事..." id="contentInput"></textarea>
+        </div>
+
+        <!-- 图片上传 -->
+        <div class="image-upload">
+            <div class="upload-btn" onclick="selectImage()">
+                <div class="icon">+</div>
+                <div>添加图片</div>
+            </div>
+        </div>
+
+        <!-- 位置信息 -->
+        <div class="location-bar">
+            <span class="icon">📍</span>
+            <span id="locationText">牛路村 · 广西防城港市</span>
+        </div>
+
+        <!-- 高级选项 -->
+        <div class="options-section">
+            <div class="option-item">
+                <div class="option-left">
+                    <div class="option-icon">👁️</div>
+                    <span>可见范围</span>
+                </div>
+                <div class="option-right">
+                    <span>公开</span>
+                    <span class="arrow">›</span>
+                </div>
+            </div>
+            <div class="option-item">
+                <div class="option-left">
+                    <div class="option-icon">🏷️</div>
+                    <span>关联村庄</span>
+                </div>
+                <div class="option-right">
+                    <span>牛路村</span>
+                    <span class="arrow">›</span>
+                </div>
+            </div>
+            <div class="option-item">
+                <div class="option-left">
+                    <div class="option-icon">🔔</div>
+                    <span>提醒谁看</span>
+                </div>
+                <div class="option-right">
+                    <span class="arrow">›</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 话题标签 -->
+        <div class="topic-section">
+            <div class="topic-title">推荐话题</div>
+            <div class="topic-tags">
+                <span class="topic-tag">#乡村美景</span>
+                <span class="topic-tag">#农家美食</span>
+                <span class="topic-tag">#民宿推荐</span>
+                <span class="topic-tag">#赶集日记</span>
+                <span class="topic-tag">#星空露营</span>
+                <span class="topic-tag">#丰收季节</span>
+            </div>
+        </div>
+
+        <!-- 底部提示 -->
+        <div class="footer-tips">
+            发布即表示同意《寻村社区规范》
+        </div>
+    </div>
+
+    <script>
+        // 返回上一页
+        function goBack() {
+            history.back();
+        }
+
+        // 选择图片
+        function selectImage() {
+            alert('打开相册选择图片');
+        }
+
+        // 发布类型切换
+        document.querySelectorAll('.type-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.type-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                updatePlaceholder(this.dataset.type);
+            });
+        });
+
+        // 根据类型更新占位符
+        function updatePlaceholder(type) {
+            const input = document.getElementById('contentInput');
+            const placeholders = {
+                'moment': '分享村里的新鲜事...',
+                'food': '推荐一道好吃的农家菜...',
+                'spot': '分享一个值得打卡的地方...',
+                'homestay': '介绍一下这个民宿...',
+                'activity': '发起一个有趣的活动...'
+            };
+            input.placeholder = placeholders[type] || '分享村里的新鲜事...';
+        }
+
+        // 话题标签点击
+        document.querySelectorAll('.topic-tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const input = document.getElementById('contentInput');
+                const tagText = this.textContent;
+                if (this.classList.contains('active')) {
+                    input.value += (input.value ? ' ' : '') + tagText + ' ';
+                }
+                checkPublishable();
+            });
+        });
+
+        // 检查是否可以发布
+        function checkPublishable() {
+            const content = document.getElementById('contentInput').value.trim();
+            const btn = document.getElementById('publishBtn');
+            if (content) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        }
+
+        // 监听输入
+        document.getElementById('contentInput').addEventListener('input', checkPublishable);
+
+        // 发布按钮
+        document.getElementById('publishBtn').addEventListener('click', function() {
+            if (this.classList.contains('active')) {
+                alert('发布成功！');
+                goBack();
+            }
+        });
+    </script>
+</body>
+</html>
