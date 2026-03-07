@@ -175,16 +175,18 @@
 
         <!-- 角色切换（演示用） -->
         <div class="role-bar">
-            <span>当前身份：</span>
-            <button class="role-btn active" onclick="switchRole('tourist')" id="btn-tourist">游客</button>
+            <span>切换身份（演示）：</span>
+            <button class="role-btn active" onclick="switchRole('user')" id="btn-user">注册用户</button>
             <button class="role-btn" onclick="switchRole('villager')" id="btn-villager">村民</button>
             <button class="role-btn" onclick="switchRole('admin')" id="btn-admin">管理员</button>
         </div>
 
-        <!-- 权限提示 -->
-        <div class="perm-tip" id="permTip">
-            <span>ℹ️</span>
-            <span id="permText">游客只能浏览，请登录后发布游记</span>
+        <!-- 无权限提示 -->
+        <div id="noPermBox" style="display:none;background:#fff;padding:40px;text-align:center;">
+            <div style="font-size:48px;margin-bottom:16px;">🔒</div>
+            <h3 style="margin-bottom:8px;">请先登录</h3>
+            <p style="color:#666;margin-bottom:24px;">登录后即可发布内容</p>
+            <button onclick="goToLogin()" style="background:#10b981;color:#fff;border:none;padding:12px 32px;border-radius:8px;font-size:16px;cursor:pointer;">去登录</button>
         </div>
 
         <div class="pub-type" id="pubType">
@@ -192,15 +194,13 @@
                 <div class="icon">📸</div>
                 <div>发游记</div>
             </div>
-            <div class="type-item type-product disabled" id="type-product" onclick="selectType('product')">
+            <div class="type-item type-product hidden" id="type-product" onclick="selectType('product')">
                 <div class="icon">🍊</div>
                 <div>卖好物</div>
-                <div class="lock">村民专属</div>
             </div>
-            <div class="type-item type-notice disabled" id="type-notice" onclick="selectType('notice')">
+            <div class="type-item type-notice hidden" id="type-notice" onclick="selectType('notice')">
                 <div class="icon">📢</div>
                 <div>发公告</div>
-                <div class="lock">管理员专属</div>
             </div>
         </div>
 
@@ -246,31 +246,56 @@
         let selectedType = 'travel';
         let currentRole = 'tourist';
 
+        // 页面加载时检查登录状态
+        function checkLogin() {
+            const user = localStorage.getItem('xuncun_user');
+            if (user) {
+                const userInfo = JSON.parse(user);
+                // 根据用户角色设置
+                if (userInfo.role === 'admin') {
+                    switchRole('admin');
+                } else if (userInfo.role === 'villager') {
+                    switchRole('villager');
+                } else {
+                    switchRole('user');
+                }
+                // 隐藏角色切换条（真实环境）
+                document.querySelector('.role-bar').style.display = 'none';
+            } else {
+                // 未登录，显示无权限提示
+                showNoPerm();
+            }
+        }
+
+        function showNoPerm() {
+            document.getElementById('pubType').style.display = 'none';
+            document.getElementById('noPermBox').style.display = 'block';
+            document.querySelector('.pub-content').style.display = 'none';
+            document.querySelector('.pub-options').style.display = 'none';
+            document.querySelector('.submit').style.display = 'none';
+        }
+
+        function goToLogin() {
+            sessionStorage.setItem('returnUrl', 'publish.html');
+            window.location.href = 'login.html';
+        }
+
         // 权限配置
         const ROLE_PERMS = {
-            tourist: {
-                canTravel: false,
-                canProduct: false,
-                canNotice: false,
-                tip: '游客只能浏览，请登录后发布游记'
-            },
             user: {
                 canTravel: true,
                 canProduct: false,
-                canNotice: false,
-                tip: '您可以发布游记分享见闻'
+                canNotice: false
             },
             villager: {
                 canTravel: true,
                 canProduct: true,
-                canNotice: false,
-                tip: '村民可以发布游记和售卖农产品'
+                canNotice: false
             },
             admin: {
                 canTravel: true,
                 canProduct: true,
-                canNotice: true,
-                tip: '管理员可以发布所有类型内容'
+                canNotice: true
             }
         };
 
@@ -283,18 +308,18 @@
             
             // 更新按钮状态
             document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('btn-' + role).classList.add('active');
-            
-            // 更新权限提示
-            const perms = ROLE_PERMS[role];
-            document.getElementById('permText').textContent = perms.tip;
+            const btn = document.getElementById('btn-' + role);
+            if (btn) btn.classList.add('active');
             
             // 更新发布类型可用状态
+            const perms = ROLE_PERMS[role];
             updateTypeVisibility(perms);
             
-            // 如果当前选中的类型不可用，切换到游记
-            if (!isTypeAllowed(selectedType, perms)) {
-                selectType('travel');
+            // 自动选择第一个可用的类型
+            const visibleTypes = document.querySelectorAll('.type-item:not(.hidden)');
+            if (visibleTypes.length > 0) {
+                const firstType = visibleTypes[0].id.replace('type-', '');
+                selectType(firstType);
             }
         }
 
@@ -303,31 +328,33 @@
             const productEl = document.getElementById('type-product');
             const noticeEl = document.getElementById('type-notice');
             
-            // 游记 - 注册用户可用
+            // 游记 - 注册用户可用，无权限则隐藏
             if (perms.canTravel) {
-                travelEl.classList.remove('disabled');
-                travelEl.querySelector('.lock')?.remove();
+                travelEl.classList.remove('hidden');
             } else {
-                travelEl.classList.add('disabled');
-                if (!travelEl.querySelector('.lock')) {
-                    travelEl.insertAdjacentHTML('beforeend', '<div class="lock">登录后可用</div>');
-                }
+                travelEl.classList.add('hidden');
             }
             
-            // 好物 - 村民可用
+            // 好物 - 村民可用，无权限则隐藏
             if (perms.canProduct) {
-                productEl.classList.remove('disabled');
-                productEl.querySelector('.lock')?.remove();
+                productEl.classList.remove('hidden');
             } else {
-                productEl.classList.add('disabled');
+                productEl.classList.add('hidden');
             }
             
-            // 公告 - 管理员可用
+            // 公告 - 管理员可用，无权限则隐藏
             if (perms.canNotice) {
-                noticeEl.classList.remove('disabled');
-                noticeEl.querySelector('.lock')?.remove();
+                noticeEl.classList.remove('hidden');
             } else {
-                noticeEl.classList.add('disabled');
+                noticeEl.classList.add('hidden');
+            }
+            
+            // 重新布局：根据可见的选项调整样式
+            const visibleTypes = document.querySelectorAll('.type-item:not(.hidden)');
+            if (visibleTypes.length === 1) {
+                visibleTypes[0].style.flex = '0 0 120px';
+            } else {
+                visibleTypes.forEach(el => el.style.flex = '1');
             }
         }
 
@@ -402,7 +429,7 @@
         }
 
         // 初始化
-        switchRole('tourist');
+        checkLogin();
     </script>
 </body>
 </html>
