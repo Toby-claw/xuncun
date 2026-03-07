@@ -375,6 +375,22 @@
             <!-- 功能菜单 -->
             <div class="profile-menu">
                 <div class="menu-section">
+                    <div class="menu-title">我的信息</div>
+                    <div class="menu-item" onclick="showMyLocation()">
+                        <span class="menu-icon">📍</span>
+                        <span class="menu-text">所在位置</span>
+                        <span class="menu-value" id="myLocationValue">未设置</span>
+                        <span class="arrow">›</span>
+                    </div>
+                    <div class="menu-item" onclick="showMyVillage()">
+                        <span class="menu-icon">🏘️</span>
+                        <span class="menu-text">所属村庄</span>
+                        <span class="menu-value" id="myVillageValue">未设置</span>
+                        <span class="arrow">›</span>
+                    </div>
+                </div>
+                
+                <div class="menu-section">
                     <div class="menu-title">我的交易</div>
                     <div class="menu-item" onclick="showMyOrders()">
                         <span class="menu-icon">📦</span>
@@ -442,6 +458,72 @@
             <button class="login-btn" id="loginBtn" onclick="goToLogin()">立即登录</button>
             
             <div class="profile-version">寻村 v2.2.0</div>
+        </div>
+    </div>
+    
+    <!-- 我的位置页面 -->
+    <div class="sub-page" id="myLocationPage">
+        <div class="sub-header">
+            <div class="back-btn" onclick="backToProfile()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/>
+                </svg>
+            </div>
+            <h3>所在位置</h3>
+            <div style="width:20px;"></div>
+        </div>
+        <div class="sub-content">
+            <div class="info-card" id="currentLocationCard">
+                <div class="info-item">
+                    <div class="info-icon">📍</div>
+                    <div class="info-content">
+                        <div class="info-label">当前位置</div>
+                        <div class="info-value" id="currentLocationName">未设置</div>
+                    </div>
+                    <div class="info-action" onclick="changeLocation()">修改</div>
+                </div>            </div>
+            
+            <div style="font-size: 14px; color: #666; margin-bottom: 12px;">附近位置：</div>
+            <div class="location-list-simple" id="myLocationList">
+                <!-- 动态加载 -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- 我的村庄页面 -->
+    <div class="sub-page" id="myVillagePage">
+        <div class="sub-header">
+            <div class="back-btn" onclick="backToProfile()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/>
+                </svg>
+            </div>
+            <h3>所属村庄</h3>
+            <div style="width:20px;"></div>
+        </div>
+        <div class="sub-content">
+            <div class="info-card" id="currentVillageCard">
+                <div class="info-item">
+                    <div class="info-icon">🏘️</div>
+                    <div class="info-content">
+                        <div class="info-label">当前村庄</div>
+                        <div class="info-value" id="currentVillageName">未设置</div>
+                    </div>
+                    <div class="info-action" onclick="changeVillage()">修改</div>
+                </div>
+            </div>
+            
+            <div class="search-box" style="margin-bottom: 12px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.35-4.35"/>
+                </svg>
+                <input type="text" placeholder="搜索村庄名称" id="myVillageSearch" oninput="filterMyVillages(this.value)">
+            </div>
+            
+            <div class="village-list-simple" id="myVillageList">
+                <!-- 动态加载 -->
+            </div>
         </div>
     </div>
     
@@ -744,10 +826,11 @@
             }
         };
         
-        // 页面加载时输出版本
+        // 页面加载时初始化
         window.addEventListener('load', () => {
             setTimeout(() => xuncun.log(), 500);
             checkLoginStatus();
+            initMyInfo();
         });
         
         // 检查登录状态
@@ -909,6 +992,139 @@
         
         function goToProfileEdit() {
             toast('编辑资料功能（开发中）');
+        }
+        
+        // ========== 我的位置功能 ==========
+        
+        function showMyLocation() {
+            document.getElementById('myLocationPage').classList.add('show');
+            loadMyLocation();
+        }
+        
+        function loadMyLocation() {
+            const savedLocation = JSON.parse(localStorage.getItem('xuncun_my_location') || '{}');
+            const locationName = savedLocation.name || '未设置';
+            
+            document.getElementById('currentLocationName').textContent = locationName;
+            
+            const locations = [
+                { name: '牛路村村委会', addr: '广西防城港市防城区', distance: '50m' },
+                { name: '田心村文化广场', addr: '广西防城港市防城区', distance: '800m' },
+                { name: '竹山村民宿', addr: '广西防城港市防城区', distance: '1.2km' },
+                { name: '大榕树农家乐', addr: '广西防城港市防城区', distance: '2.5km' },
+                { name: '海边观景台', addr: '广西防城港市防城区', distance: '3.8km' }
+            ];
+            
+            const container = document.getElementById('myLocationList');
+            container.innerHTML = locations.map(loc => `
+                <div class="location-item-simple ${locationName === loc.name ? 'active' : ''}" onclick="selectMyLocation('${loc.name}')">
+                    <div class="icon">📍</div>
+                    <div class="info">
+                        <div class="name">${loc.name}</div>
+                        <div class="addr">${loc.addr} · ${loc.distance}</div>
+                    </div>
+                    <div class="check">${locationName === loc.name ? '✓' : ''}</div>
+                </div>
+            `).join('');
+        }
+        
+        function selectMyLocation(name) {
+            const location = { name: name, timestamp: new Date().toISOString() };
+            localStorage.setItem('xuncun_my_location', JSON.stringify(location));
+            document.getElementById('currentLocationName').textContent = name;
+            document.getElementById('myLocationValue').textContent = name;
+            document.getElementById('myLocationValue').style.color = '#333';
+            loadMyLocation();
+            toast('位置已更新：' + name);
+        }
+        
+        function changeLocation() {
+            toast('请选择新的位置');
+        }
+        
+        // ========== 我的村庄功能 ==========
+        
+        function showMyVillage() {
+            document.getElementById('myVillagePage').classList.add('show');
+            loadMyVillage();
+        }
+        
+        function loadMyVillage(filter = '') {
+            const savedVillage = JSON.parse(localStorage.getItem('xuncun_my_village') || '{}');
+            const villageName = savedVillage.name || '未设置';
+            
+            document.getElementById('currentVillageName').textContent = villageName;
+            
+            let villages = [
+                { name: '牛路村', region: '南宁市·防城区', type: '试点村' },
+                { name: '田心村', region: '南宁市·防城区', type: '试点村' },
+                { name: '竹山村', region: '南宁市·防城区', type: '试点村' },
+                { name: '丹桂村', region: '河池市·大化县', type: '热门村' },
+                { name: '南阳村', region: '南宁市·青秀区', type: '热门村' },
+                { name: '大明村', region: '梧州市·蒙山县', type: '试点村' },
+                { name: '那廖村', region: '南宁市·良庆区', type: '试点村' },
+                { name: '永安社区', region: '梧州市·蒙山县', type: '社区' },
+                { name: '新黎社区', region: '南宁市·青秀区', type: '社区' }
+            ];
+            
+            if (filter) {
+                villages = villages.filter(v => v.name.includes(filter) || v.region.includes(filter));
+            }
+            
+            const container = document.getElementById('myVillageList');
+            container.innerHTML = villages.map(v => `
+                <div class="village-item-simple ${villageName === v.name ? 'active' : ''}" onclick="selectMyVillage('${v.name}', '${v.region}')">
+                    <div class="icon">🏘️</div>
+                    <div class="info">
+                        <div class="name">${v.name}</div>
+                        <div class="region">${v.region} · ${v.type}</div>
+                    </div>
+                    <div class="check">${villageName === v.name ? '✓' : ''}</div>
+                </div>
+            `).join('');
+            
+            if (villages.length === 0) {
+                container.innerHTML = '<div style="text-align:center;padding:40px;color:#999;">未找到相关村庄</div>';
+            }
+        }
+        
+        function selectMyVillage(name, region) {
+            const village = { name: name, region: region, timestamp: new Date().toISOString() };
+            localStorage.setItem('xuncun_my_village', JSON.stringify(village));
+            document.getElementById('currentVillageName').textContent = name;
+            document.getElementById('myVillageValue').textContent = name;
+            document.getElementById('myVillageValue').style.color = '#333';
+            loadMyVillage();
+            toast('村庄已更新：' + name);
+        }
+        
+        function changeVillage() {
+            toast('请选择新的村庄');
+        }
+        
+        function filterMyVillages(keyword) {
+            loadMyVillage(keyword);
+        }
+        
+        function initMyInfo() {
+            const savedLocation = JSON.parse(localStorage.getItem('xuncun_my_location') || '{}');
+            const savedVillage = JSON.parse(localStorage.getItem('xuncun_my_village') || '{}');
+            
+            if (savedLocation.name) {
+                const locEl = document.getElementById('myLocationValue');
+                if (locEl) {
+                    locEl.textContent = savedLocation.name;
+                    locEl.style.color = '#333';
+                }
+            }
+            
+            if (savedVillage.name) {
+                const vilEl = document.getElementById('myVillageValue');
+                if (vilEl) {
+                    vilEl.textContent = savedVillage.name;
+                    vilEl.style.color = '#333';
+                }
+            }
         }
         
         function handleLogout() {
