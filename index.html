@@ -437,6 +437,10 @@
             
             <button class="logout-btn" id="logoutBtn" onclick="handleLogout()">退出登录</button>
             
+            <button class="switch-account-btn" id="switchAccountBtn" onclick="switchAccount()">切换账号</button>
+            
+            <button class="login-btn" id="loginBtn" onclick="goToLogin()">立即登录</button>
+            
             <div class="profile-version">寻村 v2.2.0</div>
         </div>
     </div>
@@ -799,12 +803,24 @@
             // 控制徽章显示
             ['orderBadge', 'productBadge', 'favBadge'].forEach(id => {
                 const badge = document.getElementById(id);
-                if (badge.textContent === '0' || badge.textContent === '') {
-                    badge.style.display = 'none';
-                } else {
-                    badge.style.display = 'block';
+                if (badge) {
+                    if (badge.textContent === '0' || badge.textContent === '') {
+                        badge.style.display = 'none';
+                    } else {
+                        badge.style.display = 'block';
+                    }
                 }
             });
+            
+            // 根据登录状态控制按钮显示
+            const isLoggedIn = !!localStorage.getItem('xuncun_user');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const switchBtn = document.getElementById('switchAccountBtn');
+            const loginBtn = document.getElementById('loginBtn');
+            
+            if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'block' : 'none';
+            if (switchBtn) switchBtn.style.display = isLoggedIn ? 'block' : 'none';
+            if (loginBtn) loginBtn.style.display = isLoggedIn ? 'none' : 'block';
         }
         
         function closeProfile() {
@@ -896,7 +912,16 @@
         }
         
         function handleLogout() {
-            if (confirm('确定要退出登录吗？')) {
+            const user = localStorage.getItem('xuncun_user');
+            if (!user) {
+                toast('您还未登录');
+                return;
+            }
+            
+            const userInfo = JSON.parse(user);
+            
+            // 使用更友好的确认对话框
+            if (confirm(`确定要退出登录吗？\n\n当前账号：${userInfo.name}\n身份：${userInfo.roleName}\n\n退出后需要重新登录才能发布内容。`)) {
                 logout();
                 closeProfile();
             }
@@ -904,10 +929,30 @@
         
         // 退出登录
         function logout() {
+            // 清除所有登录相关数据
             localStorage.removeItem('xuncun_user');
             localStorage.removeItem('xuncun_token');
+            
+            // 可选：清除临时数据（保留用户偏好设置）
+            // localStorage.removeItem('xuncun_settings');
+            
             toast('已退出登录');
-            setTimeout(() => location.reload(), 500);
+            
+            // 延迟刷新，让用户看到提示
+            setTimeout(() => {
+                // 返回首页并刷新状态
+                window.location.href = 'index.html';
+            }, 800);
+        }
+        
+        // 切换账号（退出并跳转到登录页）
+        function switchAccount() {
+            if (confirm('确定要切换账号吗？')) {
+                logout();
+                setTimeout(() => {
+                    goToLogin();
+                }, 500);
+            }
         }
     </script>
     
