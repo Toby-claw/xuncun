@@ -199,24 +199,174 @@
         .option-item .arrow { color: #999; }
         .option-item .value { color: #999; font-size: 14px; margin-right: 8px; }
 
-        /* 无权限提示 */
-        .no-perm-box {
+        /* 位置选择弹窗 */
+        .location-modal, .village-modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1001;
             display: none;
-            background: #fff;
-            padding: 40px;
-            text-align: center;
+            align-items: flex-end;
         }
-        .no-perm-box .icon { font-size: 48px; margin-bottom: 16px; }
-        .no-perm-box h3 { margin-bottom: 8px; }
-        .no-perm-box p { color: #666; margin-bottom: 24px; }
-        .no-perm-box button {
+        .location-modal.show, .village-modal.show {
+            display: flex;
+        }
+        .modal-content {
+            background: #fff;
+            width: 100%;
+            max-height: 70vh;
+            border-radius: 16px 16px 0 0;
+            padding: 16px;
+            animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        .modal-title {
+            font-size: 17px;
+            font-weight: 600;
+        }
+        .modal-close {
+            color: #999;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        
+        /* 地图位置选择 */
+        .map-box {
+            background: #f5f5f5;
+            border-radius: 12px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            color: #666;
+        }
+        .map-box .icon {
+            font-size: 48px;
+            margin-bottom: 8px;
+        }
+        .location-btn {
             background: #10b981;
             color: #fff;
             border: none;
-            padding: 12px 32px;
+            padding: 12px 24px;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 15px;
+            width: 100%;
             cursor: pointer;
+        }
+        .nearby-locations {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .location-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #f5f5f5;
+            cursor: pointer;
+        }
+        .location-item:hover, .location-item.selected {
+            background: #f0fdf4;
+        }
+        .location-item .icon {
+            font-size: 20px;
+            margin-right: 12px;
+        }
+        .location-info {
+            flex: 1;
+        }
+        .location-name {
+            font-size: 15px;
+            font-weight: 500;
+        }
+        .location-addr {
+            font-size: 12px;
+            color: #999;
+            margin-top: 2px;
+        }
+        .location-distance {
+            font-size: 12px;
+            color: #10b981;
+        }
+        
+        /* 村庄选择 */
+        .search-box {
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .search-box input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            outline: none;
+            margin-left: 8px;
+        }
+        .village-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            overflow-x: auto;
+        }
+        .village-tab {
+            padding: 6px 12px;
+            background: #f5f5f5;
+            border-radius: 16px;
+            font-size: 13px;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+        .village-tab.active {
+            background: #10b981;
+            color: #fff;
+        }
+        .village-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .village-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #f5f5f5;
+            cursor: pointer;
+        }
+        .village-item:hover, .village-item.selected {
+            background: #f0fdf4;
+        }
+        .village-item .check {
+            width: 20px;
+            margin-right: 8px;
+            color: #10b981;
+            font-weight: bold;
+        }
+        .village-item .check:empty::before {
+            content: '';
+        }
+        .village-name {
+            flex: 1;
+            font-size: 15px;
+        }
+        .village-region {
+            font-size: 12px;
+            color: #999;
         }
     </style>
 </head>
@@ -279,23 +429,75 @@
         </div>
 
         <div class="pub-options">
-            <div class="option-item" onclick="selectLocation()">
+            <div class="option-item" onclick="showLocationPicker()">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                     <circle cx="12" cy="10" r="3"/>
                 </svg>
                 <span>所在位置</span>
-                <span class="value" id="location">牛路村</span>
+                <span class="value" id="locationValue">点击选择位置</span>
                 <span class="arrow">›</span>
             </div>
-            <div class="option-item" onclick="selectVillage()">
+            <div class="option-item" onclick="showVillagePicker()">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                     <polyline points="9 22 9 12 15 12 15 22"/>
                 </svg>
                 <span>所属村庄</span>
-                <span class="value" id="village">牛路村</span>
+                <span class="value" id="villageValue">点击选择村庄</span>
                 <span class="arrow">›</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 位置选择弹窗 -->
+    <div class="location-modal" id="locationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">选择位置</div>
+                <div class="modal-close" onclick="closeLocationPicker()">✕</div>
+            </div>
+            
+            <div class="map-box">
+                <div class="icon">🗺️</div>
+                <div>地图加载中...（演示模式）</div>
+            </div>
+            
+            <button class="location-btn" onclick="getCurrentLocation()">
+                📍 获取当前位置
+            </button>
+            
+            <div style="margin-top: 16px; font-size: 14px; color: #666;">附近位置：</div>
+            <div class="nearby-locations" id="nearbyLocations">
+                <!-- 动态加载 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 村庄选择弹窗 -->
+    <div class="village-modal" id="villageModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">选择所属村庄</div>
+                <div class="modal-close" onclick="closeVillagePicker()">✕</div>
+            </div>
+            
+            <div class="search-box">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.35-4.35"/>
+                </svg>
+                <input type="text" placeholder="搜索村庄名称" id="villageSearch" oninput="filterVillages(this.value)">
+            </div>
+            
+            <div class="village-tabs">
+                <div class="village-tab active" onclick="switchVillageTab(this, 'nearby')">附近</div>
+                <div class="village-tab" onclick="switchVillageTab(this, 'all')">全部</div>
+                <div class="village-tab" onclick="switchVillageTab(this, 'city')">按城市</div>
+            </div>
+            
+            <div class="village-list" id="villageList">
+                <!-- 动态加载 -->
             </div>
         </div>
     </div>
@@ -516,14 +718,140 @@
 
         // ========== 其他功能 ==========
 
-        function selectLocation() {
-            toast('定位功能：当前位置 牛路村');
+        // ========== 位置选择功能 ==========
+        
+        // 模拟附近位置数据
+        const nearbyLocations = [
+            { name: '牛路村村委会', address: '广西防城港市防城区', distance: '50m', lat: 21.65, lng: 108.35 },
+            { name: '田心村文化广场', address: '广西防城港市防城区', distance: '800m', lat: 21.66, lng: 108.36 },
+            { name: '竹山村民宿', address: '广西防城港市防城区', distance: '1.2km', lat: 21.64, lng: 108.34 },
+            { name: '大榕树农家乐', address: '广西防城港市防城区', distance: '2.5km', lat: 21.67, lng: 108.37 },
+            { name: '海边观景台', address: '广西防城港市防城区', distance: '3.8km', lat: 21.68, lng: 108.33 }
+        ];
+        
+        let selectedLocation = null;
+        
+        function showLocationPicker() {
+            document.getElementById('locationModal').classList.add('show');
+            renderNearbyLocations();
         }
-
-        function selectVillage() {
-            toast('所属村庄：牛路村');
+        
+        function closeLocationPicker() {
+            document.getElementById('locationModal').classList.remove('show');
         }
-
+        
+        function renderNearbyLocations() {
+            const container = document.getElementById('nearbyLocations');
+            container.innerHTML = nearbyLocations.map((loc, index) => `
+                <div class="location-item ${selectedLocation?.name === loc.name ? 'selected' : ''}" onclick="selectLocation(${index})">
+                    <div class="icon">📍</div>
+                    <div class="location-info">
+                        <div class="location-name">${loc.name}</div>
+                        <div class="location-addr">${loc.address}</div>
+                    </div>
+                    <div class="location-distance">${loc.distance}</div>
+                </div>
+            `).join('');
+        }
+        
+        function selectLocation(index) {
+            selectedLocation = nearbyLocations[index];
+            document.getElementById('locationValue').textContent = selectedLocation.name;
+            document.getElementById('locationValue').style.color = '#333';
+            closeLocationPicker();
+            toast('已选择：' + selectedLocation.name);
+        }
+        
+        function getCurrentLocation() {
+            toast('正在定位...');
+            setTimeout(() => {
+                selectLocation(0); // 默认选择第一个（最近的位置）
+            }, 1000);
+        }
+        
+        // ========== 村庄选择功能 ==========
+        
+        // 模拟村庄数据（实际应从钉钉表格或数据库加载）
+        const villages = [
+            { name: '牛路村', region: '南宁市·防城区', type: '试点村' },
+            { name: '田心村', region: '南宁市·防城区', type: '试点村' },
+            { name: '竹山村', region: '南宁市·防城区', type: '试点村' },
+            { name: '丹桂村', region: '河池市·大化县', type: '热门村' },
+            { name: '南阳村', region: '南宁市·青秀区', type: '热门村' },
+            { name: '大明村', region: '梧州市·蒙山县', type: '试点村' },
+            { name: '那廖村', region: '南宁市·良庆区', type: '试点村' },
+            { name: '永安社区', region: '梧州市·蒙山县', type: '社区' },
+            { name: '新黎社区', region: '南宁市·青秀区', type: '社区' },
+            { name: '虾箩村', region: '防城港市·港口区', type: '试点村' },
+            { name: '沙塘村', region: '桂林市·临桂区', type: '试点村' },
+            { name: '平孟村', region: '来宾市·金秀县', type: '试点村' }
+        ];
+        
+        let selectedVillage = null;
+        let currentVillageTab = 'nearby';
+        
+        function showVillagePicker() {
+            document.getElementById('villageModal').classList.add('show');
+            renderVillageList();
+        }
+        
+        function closeVillagePicker() {
+            document.getElementById('villageModal').classList.remove('show');
+        }
+        
+        function switchVillageTab(el, tab) {
+            document.querySelectorAll('.village-tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            currentVillageTab = tab;
+            renderVillageList();
+        }
+        
+        function renderVillageList(filterText = '') {
+            const container = document.getElementById('villageList');
+            let list = villages;
+            
+            // 根据标签筛选
+            if (currentVillageTab === 'nearby') {
+                list = villages.slice(0, 5); // 附近显示前5个
+            } else if (currentVillageTab === 'city') {
+                list = villages.filter(v => v.region.includes('南宁'));
+            }
+            
+            // 搜索筛选
+            if (filterText) {
+                list = villages.filter(v => 
+                    v.name.includes(filterText) || v.region.includes(filterText)
+                );
+            }
+            
+            container.innerHTML = list.map(v => `
+                <div class="village-item ${selectedVillage?.name === v.name ? 'selected' : ''}" onclick="selectVillage('${v.name}')">
+                    <div class="check">${selectedVillage?.name === v.name ? '✓' : ''}</div>
+                    <div class="village-name">${v.name}</div>
+                    <div class="village-region">${v.region} · ${v.type}</div>
+                </div>
+            `).join('');
+            
+            if (list.length === 0) {
+                container.innerHTML = '<div style="text-align:center;padding:40px;color:#999;">未找到相关村庄</div>';
+            }
+        }
+        
+        function selectVillage(name) {
+            selectedVillage = villages.find(v => v.name === name);
+            document.getElementById('villageValue').textContent = selectedVillage.name;
+            document.getElementById('villageValue').style.color = '#333';
+            renderVillageList(); // 重新渲染显示选中状态
+            closeVillagePicker();
+            toast('已选择：' + selectedVillage.name);
+        }
+        
+        function filterVillages(keyword) {
+            renderVillageList(keyword);
+        }
+        
+        // ========== 发布功能（更新） ==========
+        
         function publish() {
             const perms = ROLE_PERMS[currentRole];
             
@@ -537,12 +865,22 @@
                 toast('请输入内容或添加图片');
                 return;
             }
+            
+            if (!selectedLocation) {
+                toast('请选择所在位置');
+                return;
+            }
+            
+            if (!selectedVillage) {
+                toast('请选择所属村庄');
+                return;
+            }
 
             const postData = {
                 type: selectedType,
                 content: content,
-                location: document.getElementById('location').textContent,
-                village: document.getElementById('village').textContent,
+                location: selectedLocation,
+                village: selectedVillage,
                 images: selectedImages.length,
                 timestamp: new Date().toISOString()
             };
