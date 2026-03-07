@@ -1,0 +1,86 @@
+solid Japanese_Shop_Building_1_150
+facet normal 0 0 1
+outer loop
+vertex 0 0 20
+vertex 30 0 20
+vertex 30 40 20
+endloop
+endfacet
+facet normal 0 0 1
+outer loop
+vertex 0 0 20
+vertex 30 40 20
+vertex 0 40 20
+endloop
+endfacet
+facet normal 0 0 -1
+outer loop
+vertex 0 0 0
+vertex 0 40 0
+vertex 30 40 0
+endloop
+endfacet
+facet normal 0 0 -1
+outer loop
+vertex 0 0 0
+vertex 30 40 0
+vertex 30 0 0
+endloop
+endfacet
+facet normal 0 -1 0
+outer loop
+vertex 0 0 0
+vertex 30 0 0
+vertex 30 0 20
+endloop
+endfacet
+facet normal 0 -1 0
+outer loop
+vertex 0 0 0
+vertex 30 0 20
+vertex 0 0 20
+endloop
+endfacet
+facet normal 0 1 0
+outer loop
+vertex 0 40 0
+vertex 0 40 20
+vertex 30 40 20
+endloop
+endfacet
+facet normal 0 1 0
+outer loop
+vertex 0 40 0
+vertex 30 40 20
+vertex 30 40 0
+endloop
+endfacet
+facet normal -1 0 0
+outer loop
+vertex 0 0 0
+vertex 0 40 0
+vertex 0 40 20
+endloop
+endfacet
+facet normal -1 0 0
+outer loop
+vertex 0 0 0
+vertex 0 40 20
+vertex 0 0 20
+endloop
+endfacet
+facet normal 1 0 0
+outer loop
+vertex 30 0 0
+vertex 30 0 20
+vertex 30 40 20
+endloop
+endfacet
+facet normal 1 0 0
+outer loop
+vertex 30 0 0
+vertex 30 40 20
+vertex 30 40 0
+endloop
+endfacet
+endsolid Japanese_Shop_Building_1_150
