@@ -424,7 +424,19 @@
         }
 
         // 菜单
-        function showMenu() { toast('菜单'); }
+        function showMenu() {
+            const user = localStorage.getItem('xuncun_user');
+            if (user) {
+                const userInfo = JSON.parse(user);
+                if (confirm(`当前登录：${userInfo.name} (${userInfo.roleName})\n\n要退出登录吗？`)) {
+                    logout();
+                }
+            } else {
+                if (confirm('您还未登录\n\n要去登录吗？')) {
+                    goToLogin();
+                }
+            }
+        }
 
         // 播放音频
         function playAudio() { toast('播放村庄介绍'); }
