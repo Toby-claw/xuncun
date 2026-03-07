@@ -114,11 +114,41 @@
         }
         .pub-textarea::placeholder { color: #999; }
 
+        /* 图片上传区域 */
         .pub-media {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
             margin-top: 16px;
+        }
+        .media-item {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            background: #f5f5f5;
+        }
+        .media-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .media-delete {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 20px;
+            height: 20px;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
         }
         .media-add {
             width: 80px;
@@ -132,8 +162,25 @@
             color: #999;
             font-size: 12px;
             cursor: pointer;
+            position: relative;
         }
         .media-add svg { margin-bottom: 4px; }
+        .media-add input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .media-count {
+            width: 100%;
+            text-align: right;
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
 
         .pub-options {
             background: #fff;
@@ -152,16 +199,24 @@
         .option-item .arrow { color: #999; }
         .option-item .value { color: #999; font-size: 14px; margin-right: 8px; }
 
-        /* 权限提示 */
-        .perm-tip {
-            background: #fffbeb;
-            border: 1px solid #fcd34d;
-            color: #92400e;
-            padding: 12px 16px;
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        /* 无权限提示 */
+        .no-perm-box {
+            display: none;
+            background: #fff;
+            padding: 40px;
+            text-align: center;
+        }
+        .no-perm-box .icon { font-size: 48px; margin-bottom: 16px; }
+        .no-perm-box h3 { margin-bottom: 8px; }
+        .no-perm-box p { color: #666; margin-bottom: 24px; }
+        .no-perm-box button {
+            background: #10b981;
+            color: #fff;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -182,11 +237,11 @@
         </div>
 
         <!-- 无权限提示 -->
-        <div id="noPermBox" style="display:none;background:#fff;padding:40px;text-align:center;">
-            <div style="font-size:48px;margin-bottom:16px;">🔒</div>
-            <h3 style="margin-bottom:8px;">请先登录</h3>
-            <p style="color:#666;margin-bottom:24px;">登录后即可发布内容</p>
-            <button onclick="goToLogin()" style="background:#10b981;color:#fff;border:none;padding:12px 32px;border-radius:8px;font-size:16px;cursor:pointer;">去登录</button>
+        <div class="no-perm-box" id="noPermBox">
+            <div class="icon">🔒</div>
+            <h3>请先登录</h3>
+            <p>登录后即可发布内容</p>
+            <button onclick="goToLogin()">去登录</button>
         </div>
 
         <div class="pub-type" id="pubType">
@@ -206,16 +261,21 @@
 
         <div class="pub-content">
             <textarea class="pub-textarea" placeholder="分享你在村庄的见闻、美食、风景..." id="content"></textarea>
-            <div class="pub-media">
-                <div class="media-add" onclick="addMedia()">
+            
+            <!-- 图片上传区域 -->
+            <div class="pub-media" id="mediaContainer">
+                <!-- 图片预览会插入这里 -->
+                <div class="media-add" id="addBtn" onclick="selectImage()">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
                         <circle cx="8.5" cy="8.5" r="1.5"/>
                         <polyline points="21 15 16 10 5 21"/>
                     </svg>
                     <span>添加图片</span>
+                    <input type="file" id="imageInput" accept="image/*" multiple onchange="handleImages(this)">
                 </div>
             </div>
+            <div class="media-count" id="mediaCount">0/9</div>
         </div>
 
         <div class="pub-options">
@@ -244,14 +304,15 @@
 
     <script>
         let selectedType = 'travel';
-        let currentRole = 'tourist';
+        let currentRole = 'user';
+        let selectedImages = []; // 存储选择的图片
+        const MAX_IMAGES = 9;
 
         // 页面加载时检查登录状态
         function checkLogin() {
             const user = localStorage.getItem('xuncun_user');
             if (user) {
                 const userInfo = JSON.parse(user);
-                // 根据用户角色设置
                 if (userInfo.role === 'admin') {
                     switchRole('admin');
                 } else if (userInfo.role === 'villager') {
@@ -259,10 +320,8 @@
                 } else {
                     switchRole('user');
                 }
-                // 隐藏角色切换条（真实环境）
                 document.querySelector('.role-bar').style.display = 'none';
             } else {
-                // 未登录，显示无权限提示
                 showNoPerm();
             }
         }
@@ -306,16 +365,13 @@
         function switchRole(role) {
             currentRole = role;
             
-            // 更新按钮状态
             document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
             const btn = document.getElementById('btn-' + role);
             if (btn) btn.classList.add('active');
             
-            // 更新发布类型可用状态
             const perms = ROLE_PERMS[role];
             updateTypeVisibility(perms);
             
-            // 自动选择第一个可用的类型
             const visibleTypes = document.querySelectorAll('.type-item:not(.hidden)');
             if (visibleTypes.length > 0) {
                 const firstType = visibleTypes[0].id.replace('type-', '');
@@ -328,28 +384,24 @@
             const productEl = document.getElementById('type-product');
             const noticeEl = document.getElementById('type-notice');
             
-            // 游记 - 注册用户可用，无权限则隐藏
             if (perms.canTravel) {
                 travelEl.classList.remove('hidden');
             } else {
                 travelEl.classList.add('hidden');
             }
             
-            // 好物 - 村民可用，无权限则隐藏
             if (perms.canProduct) {
                 productEl.classList.remove('hidden');
             } else {
                 productEl.classList.add('hidden');
             }
             
-            // 公告 - 管理员可用，无权限则隐藏
             if (perms.canNotice) {
                 noticeEl.classList.remove('hidden');
             } else {
                 noticeEl.classList.add('hidden');
             }
             
-            // 重新布局：根据可见的选项调整样式
             const visibleTypes = document.querySelectorAll('.type-item:not(.hidden)');
             if (visibleTypes.length === 1) {
                 visibleTypes[0].style.flex = '0 0 120px';
@@ -371,7 +423,7 @@
             if (!isTypeAllowed(type, perms)) {
                 if (type === 'product') toast('只有村民可以售卖农产品');
                 if (type === 'notice') toast('只有管理员可以发布公告');
-                if (type === 'travel' && currentRole === 'tourist') toast('请登录后发布游记');
+                if (type === 'travel') toast('请登录后发布游记');
                 return;
             }
             
@@ -389,16 +441,87 @@
             }
         }
 
-        function addMedia() {
-            toast('选择图片功能（演示版）');
+        // ========== 图片上传功能 ==========
+        
+        function selectImage() {
+            if (selectedImages.length >= MAX_IMAGES) {
+                toast('最多只能上传9张图片');
+                return;
+            }
+            document.getElementById('imageInput').click();
         }
 
+        function handleImages(input) {
+            const files = Array.from(input.files);
+            
+            if (selectedImages.length + files.length > MAX_IMAGES) {
+                toast('最多只能上传9张图片');
+                files.splice(MAX_IMAGES - selectedImages.length);
+            }
+            
+            files.forEach(file => {
+                if (!file.type.startsWith('image/')) {
+                    toast('请选择图片文件');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    selectedImages.push({
+                        file: file,
+                        dataUrl: e.target.result
+                    });
+                    renderImages();
+                };
+                reader.readAsDataURL(file);
+            });
+            
+            // 清空input，允许重复选择相同文件
+            input.value = '';
+        }
+
+        function renderImages() {
+            const container = document.getElementById('mediaContainer');
+            const addBtn = document.getElementById('addBtn');
+            
+            // 移除所有现有的图片预览（保留添加按钮）
+            container.querySelectorAll('.media-item').forEach(el => el.remove());
+            
+            // 添加图片预览
+            selectedImages.forEach((img, index) => {
+                const item = document.createElement('div');
+                item.className = 'media-item';
+                item.innerHTML = `
+                    <img src="${img.dataUrl}" alt="图片${index + 1}">
+                    <button class="media-delete" onclick="deleteImage(${index})">×</button>
+                `;
+                container.insertBefore(item, addBtn);
+            });
+            
+            // 更新计数
+            document.getElementById('mediaCount').textContent = `${selectedImages.length}/${MAX_IMAGES}`;
+            
+            // 控制添加按钮显示/隐藏
+            if (selectedImages.length >= MAX_IMAGES) {
+                addBtn.style.display = 'none';
+            } else {
+                addBtn.style.display = 'flex';
+            }
+        }
+
+        function deleteImage(index) {
+            selectedImages.splice(index, 1);
+            renderImages();
+        }
+
+        // ========== 其他功能 ==========
+
         function selectLocation() {
-            toast('定位功能（演示版）');
+            toast('定位功能：当前位置 牛路村');
         }
 
         function selectVillage() {
-            toast('选择村庄功能（演示版）');
+            toast('所属村庄：牛路村');
         }
 
         function publish() {
@@ -410,12 +533,23 @@
             }
             
             const content = document.getElementById('content').value.trim();
-            if (!content) {
-                toast('请输入内容');
+            if (!content && selectedImages.length === 0) {
+                toast('请输入内容或添加图片');
                 return;
             }
 
-            toast('发布成功！');
+            const postData = {
+                type: selectedType,
+                content: content,
+                location: document.getElementById('location').textContent,
+                village: document.getElementById('village').textContent,
+                images: selectedImages.length,
+                timestamp: new Date().toISOString()
+            };
+            
+            console.log('发布数据:', postData);
+            toast(`发布成功！${selectedImages.length > 0 ? '包含' + selectedImages.length + '张图片' : ''}`);
+            
             setTimeout(() => {
                 window.location.href = 'index.html';
             }, 1000);
