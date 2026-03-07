@@ -342,32 +342,209 @@
             <div style="width:24px;"></div>
         </div>
         <div class="profile-content">
+            <!-- 用户信息卡 -->
             <div class="user-card" id="userCard">
                 <img class="user-avatar" id="userAvatar" src="" alt="头像">
                 <div class="user-info">
                     <div class="user-name" id="userName">未登录</div>
                     <div class="user-role" id="userRole">游客</div>
                 </div>
+                <div class="user-edit" onclick="goToProfileEdit()">编辑资料 ›</div>
             </div>
+            
+            <!-- 数据统计 -->
+            <div class="stats-grid">
+                <div class="stat-item" onclick="showMyPosts()">
+                    <div class="stat-num" id="statPosts">0</div>
+                    <div class="stat-label">发布</div>
+                </div>
+                <div class="stat-item" onclick="showMyFavorites()">
+                    <div class="stat-num" id="statFavorites">0</div>
+                    <div class="stat-label">收藏</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num" id="statPoints">0</div>
+                    <div class="stat-label">积分</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num" id="statViews">0</div>
+                    <div class="stat-label">访客</div>
+                </div>
+            </div>
+            
+            <!-- 功能菜单 -->
             <div class="profile-menu">
-                <div class="menu-item" onclick="toast('我的订单')">
-                    <span>📦 我的订单</span>
-                    <span class="arrow">›</span>
+                <div class="menu-section">
+                    <div class="menu-title">我的交易</div>
+                    <div class="menu-item" onclick="showMyOrders()">
+                        <span class="menu-icon">📦</span>
+                        <span class="menu-text">我的订单</span>
+                        <span class="menu-badge" id="orderBadge">0</span>
+                        <span class="arrow">›</span>
+                    </div>
+                    <div class="menu-item" onclick="showMyProducts()">
+                        <span class="menu-icon">🛍️</span>
+                        <span class="menu-text">我的商品</span>
+                        <span class="menu-badge" id="productBadge">0</span>
+                        <span class="arrow">›</span>
+                    </div>
+                    <div class="menu-item" onclick="showMyWallet()">
+                        <span class="menu-icon">💰</span>
+                        <span class="menu-text">我的钱包</span>
+                        <span class="arrow">›</span>
+                    </div>
                 </div>
-                <div class="menu-item" onclick="toast('我的游记')">
-                    <span>📝 我的游记</span>
-                    <span class="arrow">›</span>
+                
+                <div class="menu-section">
+                    <div class="menu-title">我的内容</div>
+                    <div class="menu-item" onclick="showMyPosts()">
+                        <span class="menu-icon">📝</span>
+                        <span class="menu-text">我的游记</span>
+                        <span class="arrow">›</span>
+                    </div>
+                    <div class="menu-item" onclick="showMyFavorites()">
+                        <span class="menu-icon">⭐</span>
+                        <span class="menu-text">我的收藏</span>
+                        <span class="menu-badge" id="favBadge">0</span>
+                        <span class="arrow">›</span>
+                    </div>
+                    <div class="menu-item" onclick="showMyHistory()">
+                        <span class="menu-icon">👀</span>
+                        <span class="menu-text">浏览历史</span>
+                        <span class="arrow">›</span>
+                    </div>
                 </div>
-                <div class="menu-item" onclick="toast('我的收藏')">
-                    <span>⭐ 我的收藏</span>
-                    <span class="arrow">›</span>
-                </div>
-                <div class="menu-item" onclick="toast('设置')">
-                    <span>⚙️ 设置</span>
-                    <span class="arrow">›</span>
+                
+                <div class="menu-section">
+                    <div class="menu-title">系统服务</div>
+                    <div class="menu-item" onclick="showSettings()">
+                        <span class="menu-icon">⚙️</span>
+                        <span class="menu-text">设置</span>
+                        <span class="arrow">›</span>
+                    </div>
+                    <div class="menu-item" onclick="showHelp()">
+                        <span class="menu-icon">❓</span>
+                        <span class="menu-text">帮助与反馈</span>
+                        <span class="arrow">›</span>
+                    </div>
+                    <div class="menu-item" onclick="showAbout()">
+                        <span class="menu-icon">ℹ️</span>
+                        <span class="menu-text">关于寻村</span>
+                        <span class="arrow">›</span>
+                    </div>
                 </div>
             </div>
+            
             <button class="logout-btn" id="logoutBtn" onclick="handleLogout()">退出登录</button>
+            
+            <div class="profile-version">寻村 v2.2.0</div>
+        </div>
+    </div>
+    
+    <!-- 设置页面 -->
+    <div class="sub-page" id="settingsPage">
+        <div class="sub-header">
+            <div class="back-btn" onclick="backToProfile()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/>
+                </svg>
+            </div>
+            <h3>设置</h3>
+            <div style="width:20px;"></div>
+        </div>
+        <div class="sub-content">
+            <div class="setting-group">
+                <div class="setting-item">
+                    <span>消息通知</span>
+                    <label class="switch">
+                        <input type="checkbox" checked id="notifSwitch" onchange="toggleSetting('notification', this.checked)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <span>声音提醒</span>
+                    <label class="switch">
+                        <input type="checkbox" checked id="soundSwitch" onchange="toggleSetting('sound', this.checked)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <span>省流量模式</span>
+                    <label class="switch">
+                        <input type="checkbox" id="dataSwitch" onchange="toggleSetting('dataSave', this.checked)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="setting-group">
+                <div class="setting-item" onclick="clearCache()">
+                    <span>清除缓存</span>
+                    <span class="setting-value" id="cacheSize">0MB ›</span>
+                </div>
+                <div class="setting-item" onclick="checkUpdate()">
+                    <span>检查更新</span>
+                    <span class="setting-value">v2.2.0 ›</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 我的订单页面 -->
+    <div class="sub-page" id="ordersPage">
+        <div class="sub-header">
+            <div class="back-btn" onclick="backToProfile()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/>
+                </svg>
+            </div>
+            <h3>我的订单</h3>
+            <div style="width:20px;"></div>
+        </div>
+        <div class="sub-content">
+            <div class="order-tabs">
+                <div class="order-tab active" onclick="switchOrderTab(this, 'all')">全部</div>
+                <div class="order-tab" onclick="switchOrderTab(this, 'pending')">待付款</div>
+                <div class="order-tab" onclick="switchOrderTab(this, 'paid')">待发货</div>
+                <div class="order-tab" onclick="switchOrderTab(this, 'completed')">已完成</div>
+            </div>
+            <div class="order-list" id="orderList">
+                <div class="empty-state">
+                    <div class="empty-icon">📦</div>
+                    <p>暂无订单</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 我的钱包页面 -->
+    <div class="sub-page" id="walletPage">
+        <div class="sub-header">
+            <div class="back-btn" onclick="backToProfile()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/>
+                </svg>
+            </div>
+            <h3>我的钱包</h3>
+            <div style="width:20px;"></div>
+        </div>
+        <div class="sub-content">
+            <div class="wallet-card">
+                <div class="wallet-label">账户余额</div>
+                <div class="wallet-amount">¥<span id="walletBalance">0.00</span></div>
+                <div class="wallet-actions">
+                    <button class="wallet-btn primary" onclick="toast('提现功能开发中')">提现</button>
+                    <button class="wallet-btn" onclick="toast('充值功能开发中')">充值</button>
+                </div>
+            </div>
+            <div class="wallet-section">
+                <div class="wallet-title">收支明细</div>
+                <div class="wallet-list" id="walletList">
+                    <div class="empty-state">
+                        <div class="empty-icon">💰</div>
+                        <p>暂无收支记录</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -600,11 +777,122 @@
             document.getElementById('userRole').textContent = userInfo.roleName;
             document.getElementById('userAvatar').src = userInfo.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + userInfo.id;
             
+            // 加载统计数据（演示数据）
+            loadUserStats(userInfo);
+            
             profilePage.classList.add('show');
+        }
+        
+        function loadUserStats(userInfo) {
+            // 从localStorage读取统计数据，如果没有则初始化
+            const stats = JSON.parse(localStorage.getItem('xuncun_stats') || '{}');
+            document.getElementById('statPosts').textContent = stats.posts || 0;
+            document.getElementById('statFavorites').textContent = stats.favorites || 0;
+            document.getElementById('statPoints').textContent = stats.points || 0;
+            document.getElementById('statViews').textContent = stats.views || 0;
+            
+            // 徽章数量
+            document.getElementById('orderBadge').textContent = stats.pendingOrders || 0;
+            document.getElementById('productBadge').textContent = stats.products || 0;
+            document.getElementById('favBadge').textContent = stats.favorites || 0;
+            
+            // 控制徽章显示
+            ['orderBadge', 'productBadge', 'favBadge'].forEach(id => {
+                const badge = document.getElementById(id);
+                if (badge.textContent === '0' || badge.textContent === '') {
+                    badge.style.display = 'none';
+                } else {
+                    badge.style.display = 'block';
+                }
+            });
         }
         
         function closeProfile() {
             document.getElementById('profilePage').classList.remove('show');
+            // 关闭所有子页面
+            document.querySelectorAll('.sub-page').forEach(page => page.classList.remove('show'));
+        }
+        
+        function backToProfile() {
+            document.querySelectorAll('.sub-page').forEach(page => page.classList.remove('show'));
+        }
+        
+        // ========== 子页面功能 ==========
+        
+        function showSettings() {
+            document.getElementById('settingsPage').classList.add('show');
+            // 加载设置状态
+            const settings = JSON.parse(localStorage.getItem('xuncun_settings') || '{}');
+            document.getElementById('notifSwitch').checked = settings.notification !== false;
+            document.getElementById('soundSwitch').checked = settings.sound !== false;
+            document.getElementById('dataSwitch').checked = settings.dataSave === true;
+            // 计算缓存大小（演示）
+            document.getElementById('cacheSize').textContent = '2.5MB ›';
+        }
+        
+        function toggleSetting(key, value) {
+            const settings = JSON.parse(localStorage.getItem('xuncun_settings') || '{}');
+            settings[key] = value;
+            localStorage.setItem('xuncun_settings', JSON.stringify(settings));
+            toast('设置已保存');
+        }
+        
+        function clearCache() {
+            if (confirm('确定要清除缓存吗？')) {
+                localStorage.removeItem('xuncun_cache');
+                document.getElementById('cacheSize').textContent = '0MB ›';
+                toast('缓存已清除');
+            }
+        }
+        
+        function checkUpdate() {
+            toast('已是最新版本 v2.2.0');
+        }
+        
+        function showMyOrders() {
+            document.getElementById('ordersPage').classList.add('show');
+        }
+        
+        function switchOrderTab(el, type) {
+            document.querySelectorAll('.order-tab').forEach(tab => tab.classList.remove('active'));
+            el.classList.add('active');
+            // 这里可以根据type加载不同状态的订单
+            toast('加载' + el.textContent + '订单');
+        }
+        
+        function showMyProducts() {
+            toast('我的商品页面（开发中）');
+        }
+        
+        function showMyWallet() {
+            document.getElementById('walletPage').classList.add('show');
+            // 加载余额（演示数据）
+            const wallet = JSON.parse(localStorage.getItem('xuncun_wallet') || '{"balance": 0}');
+            document.getElementById('walletBalance').textContent = wallet.balance.toFixed(2);
+        }
+        
+        function showMyPosts() {
+            toast('我的游记页面（开发中）');
+        }
+        
+        function showMyFavorites() {
+            toast('我的收藏页面（开发中）');
+        }
+        
+        function showMyHistory() {
+            toast('浏览历史页面（开发中）');
+        }
+        
+        function showHelp() {
+            toast('帮助与反馈页面（开发中）');
+        }
+        
+        function showAbout() {
+            toast('寻村 v2.2.0\n广西广电网络公司\n智广乡村数字乡村项目');
+        }
+        
+        function goToProfileEdit() {
+            toast('编辑资料功能（开发中）');
         }
         
         function handleLogout() {
