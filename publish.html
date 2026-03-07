@@ -30,6 +30,31 @@
         }
         .pub-header .submit:disabled { background: #ccc; }
 
+        /* 角色切换条 */
+        .role-bar {
+            background: #fff;
+            padding: 8px 16px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+        .role-bar span { color: #666; }
+        .role-btn {
+            padding: 4px 12px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            background: #fff;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .role-btn.active {
+            background: #10b981;
+            color: #fff;
+            border-color: #10b981;
+        }
+
         .pub-type {
             background: #fff;
             padding: 16px;
@@ -45,6 +70,11 @@
             border: 2px solid #eee;
             cursor: pointer;
             transition: all 0.2s;
+        }
+        .type-item.hidden { display: none; }
+        .type-item.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
         }
         .type-item.active {
             border-color: #10b981;
@@ -63,6 +93,11 @@
         .type-travel .icon { background: #fef3c7; }
         .type-product .icon { background: #fce7f3; }
         .type-notice .icon { background: #dbeafe; }
+        .type-item .lock {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
 
         .pub-content {
             background: #fff;
@@ -116,6 +151,18 @@
         .option-item span { flex: 1; font-size: 15px; }
         .option-item .arrow { color: #999; }
         .option-item .value { color: #999; font-size: 14px; margin-right: 8px; }
+
+        /* 权限提示 */
+        .perm-tip {
+            background: #fffbeb;
+            border: 1px solid #fcd34d;
+            color: #92400e;
+            padding: 12px 16px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
     </style>
 </head>
 <body>
@@ -126,18 +173,34 @@
             <button class="submit" onclick="publish()">发布</button>
         </div>
 
-        <div class="pub-type">
-            <div class="type-item type-travel active" onclick="selectType(this, 'travel')">
+        <!-- 角色切换（演示用） -->
+        <div class="role-bar">
+            <span>当前身份：</span>
+            <button class="role-btn active" onclick="switchRole('tourist')" id="btn-tourist">游客</button>
+            <button class="role-btn" onclick="switchRole('villager')" id="btn-villager">村民</button>
+            <button class="role-btn" onclick="switchRole('admin')" id="btn-admin">管理员</button>
+        </div>
+
+        <!-- 权限提示 -->
+        <div class="perm-tip" id="permTip">
+            <span>ℹ️</span>
+            <span id="permText">游客只能浏览，请登录后发布游记</span>
+        </div>
+
+        <div class="pub-type" id="pubType">
+            <div class="type-item type-travel active" id="type-travel" onclick="selectType('travel')">
                 <div class="icon">📸</div>
                 <div>发游记</div>
             </div>
-            <div class="type-item type-product" onclick="selectType(this, 'product')">
+            <div class="type-item type-product disabled" id="type-product" onclick="selectType('product')">
                 <div class="icon">🍊</div>
                 <div>卖好物</div>
+                <div class="lock">村民专属</div>
             </div>
-            <div class="type-item type-notice" onclick="selectType(this, 'notice')">
+            <div class="type-item type-notice disabled" id="type-notice" onclick="selectType('notice')">
                 <div class="icon">📢</div>
                 <div>发公告</div>
+                <div class="lock">管理员专属</div>
             </div>
         </div>
 
@@ -181,14 +244,112 @@
 
     <script>
         let selectedType = 'travel';
+        let currentRole = 'tourist';
+
+        // 权限配置
+        const ROLE_PERMS = {
+            tourist: {
+                canTravel: false,
+                canProduct: false,
+                canNotice: false,
+                tip: '游客只能浏览，请登录后发布游记'
+            },
+            user: {
+                canTravel: true,
+                canProduct: false,
+                canNotice: false,
+                tip: '您可以发布游记分享见闻'
+            },
+            villager: {
+                canTravel: true,
+                canProduct: true,
+                canNotice: false,
+                tip: '村民可以发布游记和售卖农产品'
+            },
+            admin: {
+                canTravel: true,
+                canProduct: true,
+                canNotice: true,
+                tip: '管理员可以发布所有类型内容'
+            }
+        };
 
         function goBack() {
             window.location.href = 'index.html';
         }
 
-        function selectType(el, type) {
+        function switchRole(role) {
+            currentRole = role;
+            
+            // 更新按钮状态
+            document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('btn-' + role).classList.add('active');
+            
+            // 更新权限提示
+            const perms = ROLE_PERMS[role];
+            document.getElementById('permText').textContent = perms.tip;
+            
+            // 更新发布类型可用状态
+            updateTypeVisibility(perms);
+            
+            // 如果当前选中的类型不可用，切换到游记
+            if (!isTypeAllowed(selectedType, perms)) {
+                selectType('travel');
+            }
+        }
+
+        function updateTypeVisibility(perms) {
+            const travelEl = document.getElementById('type-travel');
+            const productEl = document.getElementById('type-product');
+            const noticeEl = document.getElementById('type-notice');
+            
+            // 游记 - 注册用户可用
+            if (perms.canTravel) {
+                travelEl.classList.remove('disabled');
+                travelEl.querySelector('.lock')?.remove();
+            } else {
+                travelEl.classList.add('disabled');
+                if (!travelEl.querySelector('.lock')) {
+                    travelEl.insertAdjacentHTML('beforeend', '<div class="lock">登录后可用</div>');
+                }
+            }
+            
+            // 好物 - 村民可用
+            if (perms.canProduct) {
+                productEl.classList.remove('disabled');
+                productEl.querySelector('.lock')?.remove();
+            } else {
+                productEl.classList.add('disabled');
+            }
+            
+            // 公告 - 管理员可用
+            if (perms.canNotice) {
+                noticeEl.classList.remove('disabled');
+                noticeEl.querySelector('.lock')?.remove();
+            } else {
+                noticeEl.classList.add('disabled');
+            }
+        }
+
+        function isTypeAllowed(type, perms) {
+            if (type === 'travel') return perms.canTravel;
+            if (type === 'product') return perms.canProduct;
+            if (type === 'notice') return perms.canNotice;
+            return false;
+        }
+
+        function selectType(type) {
+            const perms = ROLE_PERMS[currentRole];
+            
+            if (!isTypeAllowed(type, perms)) {
+                if (type === 'product') toast('只有村民可以售卖农产品');
+                if (type === 'notice') toast('只有管理员可以发布公告');
+                if (type === 'travel' && currentRole === 'tourist') toast('请登录后发布游记');
+                return;
+            }
+            
             document.querySelectorAll('.type-item').forEach(item => item.classList.remove('active'));
-            el.classList.add('active');
+            document.getElementById('type-' + type).classList.add('active');
             selectedType = type;
 
             const textarea = document.getElementById('content');
@@ -214,6 +375,13 @@
         }
 
         function publish() {
+            const perms = ROLE_PERMS[currentRole];
+            
+            if (!isTypeAllowed(selectedType, perms)) {
+                toast('当前身份无权限发布此类型内容');
+                return;
+            }
+            
             const content = document.getElementById('content').value.trim();
             if (!content) {
                 toast('请输入内容');
@@ -232,6 +400,9 @@
             t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 2000);
         }
+
+        // 初始化
+        switchRole('tourist');
     </script>
 </body>
 </html>
