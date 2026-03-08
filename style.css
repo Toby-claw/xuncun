@@ -126,8 +126,8 @@ body {
 /* 时段标识 */
 .period-badge {
     position: absolute;
-    top: 80px;
-    right: 16px;
+    top: 88px;
+    left: 16px;
     background: rgba(0,0,0,0.4);
     padding: 6px 14px;
     border-radius: 20px;
