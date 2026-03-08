@@ -274,6 +274,22 @@
         .option-item .arrow { color: #999; }
         .option-item .value { color: #999; font-size: 14px; margin-right: 8px; }
 
+        /* 一键定位快捷操作 */
+        .quick-action {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            margin: 16px;
+            color: #fff;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .quick-action:active { transform: scale(0.98); }
+        .quick-action .icon { font-size: 24px; margin-right: 12px; }
+        .quick-action span { font-size: 15px; font-weight: 500; }
+
         /* 位置选择弹窗 */
         .location-modal, .village-modal {
             position: fixed;
@@ -524,6 +540,11 @@
                 <span>所属村庄</span>
                 <span class="value" id="villageValue">点击选择村庄</span>
                 <span class="arrow">›</span>
+            </div>
+            <!-- 一键智能定位 -->
+            <div class="quick-action" onclick="handleOneClickLocation()">
+                <span class="icon">🎯</span>
+                <span>一键定位并匹配村庄</span>
             </div>
         </div>
     </div>
@@ -981,5 +1002,8 @@
         // 初始化
         checkLogin();
     </script>
+    
+    <!-- 引入智能定位模块 -->
+    <script src="location-fix.js"></script>
 </body>
 </html>
